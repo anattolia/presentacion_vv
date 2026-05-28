@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Mi Presentación</title>
+    <style>
+      :root {
+        --bg: #f5f0e8;
+        --surface: #fff8f0;
+        --card: #ffffff;
+        --border: #e0d5c5;
+        --accent1: #c0392b;
+        --accent2: #2c6e8a;
+        --text: #2d2416;
+        --muted: #8a7a66;
+        --shadow: rgba(60, 40, 10, 0.1);
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Calibri Light", sans-serif;
+        overflow: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-color: #fff;
+        /*background-image:
+    radial-gradient(ellipse at 20% 30%, #fde8c880 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%, #d4e8f060 0%, transparent 55%);*/
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      #app {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Barra superior ── */
+      #topbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 8px 16px;
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 2px 8px var(--shadow);
+        flex-shrink: 0;
+      }
+
+      #titulo-presentacion {
+        font-size: 20px;
+        color: var(--muted);
+        letter-spacing: 0.5px;
+      }
+
+      #contador {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: "Calibri Light", sans-serif;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 3px 10px;
+      }
+
+      /* ── Área slide: la imagen se come el espacio libre ── */
+      #slide-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 14px 6px;
+        overflow: hidden;
+        transition: opacity 0.28s ease;
+        min-height: 0; /* permite que flex-children encojan */
+      }
+      #slide-area.fade {
+        opacity: 0;
+      }
+
+      /* ── Imagen: flex:1 para ocupar todo el espacio sobrante ── */
+      #slide-img-wrap {
+        flex: 1; /* ← crece para llenar */
+        width: 100%;
+        min-height: 0; /* imprescindible en Safari/iOS */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      #slide-img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        border-radius: var(--radius);
+        object-fit: contain;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 18px var(--shadow);
+        background: var(--surface);
+      }
+
+      #slide-img-placeholder {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--radius);
+        background: var(--surface);
+        border: 2px dashed var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 13px;
+        font-family: "Calibri Light", sans-serif;
+      }
+
+      /* ── Texto: compacto, no crece ── */
+      #slide-texto {
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 620px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--text);
+        margin-bottom: 10px;
+        padding: 0 4px;
+      }
+
+      /* ── Audios: compactos, no crecen ── */
+      #audios-wrap {
+        flex-shrink: 0;
+        display: flex;
+        gap: 10px;
+        min-width: 20%;
+        /*max-width: 620px;*/
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+      }
+
+      .audio-card {
+        flex: 1;
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: 0 2px 10px var(--shadow);
+        padding: 5px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .audio-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-audio {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: none;
+        color: #383838;
+        font-size: 9px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition:
+          transform 0.12s,
+          opacity 0.12s;
+      }
+      .btn-audio:active {
+        transform: scale(0.88);
+        opacity: 0.8;
+      }
+
+      .audio-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .audio-idioma {
+        font-size: 11px;
+        font-family: "Calibri Light", monospace;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .audio-card.es .audio-idioma {
+        color: var(--accent1);
+      }
+      .audio-card.dv .audio-idioma {
+        color: var(--accent2);
+      }
+
+      .audio-tiempo {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: "Calibri Light", monospace;
+      }
+
+      .prog-bg {
+        height: 5px;
+        background: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .prog-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 3px;
+        transition: width 0.25s linear;
+      }
+      .audio-card.es .prog-fill {
+        background: var(--accent1);
+      }
+      .audio-card.dv .prog-fill {
+        background: var(--accent2);
+      }
+
+      /* ── Navegación ── */
+      #nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 6px 18px 10px;
+        flex-shrink: 0;
+      }
+
+      .btn-nav {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px var(--shadow);
+        transition:
+          background 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-nav:active {
+        background: var(--bg);
+        box-shadow: none;
+      }
+      .btn-nav:disabled {
+        opacity: 0.3;
+        box-shadow: none;
+      }
+
+      #dots {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--border);
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.2s;
+      }
+      .dot.active {
+        background: var(--muted);
+        transform: scale(1.45);
+      }
+
+      @media (min-width: 600px) {
+        #slide-texto {
+          font-size: 19px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="topbar">
+        <!-- Dos tarjetas de audio -->
+        <div id="audios-wrap">
+          <!-- Español -->
+          <div class="audio-card es">
+            <div class="audio-top">
+              <button
+                class="btn-audio"
+                id="btn-es"
+                aria-label="Reproducir español"
+              >
+                &#9654;
+              </button>
+              <div class="audio-info">
+                <span class="audio-idioma">Español</span>
+                <span class="audio-tiempo" id="tiempo-es">0:00 / 0:00</span>
+              </div>
+            </div>
+            <div class="prog-bg" id="prog-bg-es">
+              <div class="prog-fill" id="prog-es"></div>
+            </div>
+          </div>
+
+          <!-- Dobida / Chami (segundo idioma) -->
+          <div class="audio-card dv">
+            <div class="audio-top">
+              <button
+                class="btn-audio"
+                id="btn-dv"
+                aria-label="Reproducir dobida"
+              >
+                &#9654;
+              </button>
+              <div class="audio-info">
+                <span class="audio-idioma" id="idioma-dv">Dobida</span>
+                <span class="audio-tiempo" id="tiempo-dv">0:00 / 0:00</span>
+              </div>
+            </div>
+            <div class="prog-bg" id="prog-bg-dv">
+              <div class="prog-fill" id="prog-dv"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="slide-area">
+        <div id="slide-img-wrap"></div>
+        <p id="slide-texto"></p>
+
+        <span id="titulo-presentacion">Mi Presentación</span>
+      </div>
+
+      <div id="nav">
+        <button class="btn-nav" id="btn-prev">&#8592;</button>
+        <div id="dots"></div>
+        <button class="btn-nav" id="btn-next">&#8594;</button>
+      </div>
+    </div>
+
+    <!-- Dos elementos de audio ocultos -->
+    <audio id="player-es"></audio>
+    <audio id="player-dv"></audio>
+
+    <script>
+      // ╔══════════════════════════════════════════════════════╗
+      // ║  DATOS DE LAS DIAPOSITIVAS — edita esto              ║
+      // ║  audio_es: audio en español                          ║
+      // ║  audio_dv: audio en dobida (segundo idioma)          ║
+      // ╚══════════════════════════════════════════════════════╝
+      var diapositivas = [
+        {
+          titulo: "Luz Marley",
+          texto: "",
+          imagen: "./imagenes/1.jpg",
+          audio_es: "./audios/es/1.mp3",
+          audio_dv: "./audios/dd/1.mp3",
+          idioma: "Chami",
+        },
+        {
+          titulo: "Eroncia",
+          texto: "",
+          imagen: "./imagenes/2.jpg",
+          audio_es: "./audios/es/2.mp3",
+          audio_dv: "audios/dd/2.mp3",
+          idioma: "Dobida",
+        },
+        {
+          titulo: "Teresa",
+          texto: "",
+          imagen: "./imagenes/3.jpg",
+          audio_es: "./audios/es/3.mp3",
+          audio_dv: "./audios/dd/3.mp3",
+          idioma: "Dobida",
+        },
+        {
+          titulo: "Leticia",
+          texto: "",
+          imagen: "./imagenes/4.jpg",
+          audio_es: "./audios/es/4.mp3",
+          audio_dv: "./audios/dd/4.mp3",
+          idioma: "Chami",
+        },
+        {
+          titulo: "Clemencia",
+          texto: "",
+          imagen: "./imagenes/5.jpg",
+          audio_es: "./audios/es/5.mp3",
+          audio_dv: "./audios/dd/5.mp3",
+          idioma: "Dobida",
+        },
+        {
+          titulo: "Patricia",
+          texto: "",
+          imagen: "./imagenes/6.jpg",
+          audio_es: "./audios/es/6.mp3",
+          audio_dv: "./audios/dd/6.mp3",
+          idioma: "Dobida",
+        },
+        {
+          titulo: "María Luz Mila",
+          texto: "",
+          imagen: "./imagenes/7.jpg",
+          audio_es: "./audios/es/7.mp3",
+          audio_dv: "./audios/dd/7.mp3",
+          idioma: "Chami",
+        },
+        {
+          titulo: "María Irma",
+          texto: "",
+          imagen: "./imagenes/8.jpg",
+          audio_es: "./audios/es/8.mp3",
+          audio_dv: "./audios/dd/8.mp3",
+          idioma: "Chami",
+        },
+      ];
+      // ╔══════════════════════════════════════════════════════╗
+      // ║  FIN DE LA CONFIGURACIÓN                             ║
+      // ╚══════════════════════════════════════════════════════╝
+
+      var actual = 0;
+      var playerEs = document.getElementById("player-es");
+      var playerDv = document.getElementById("player-dv");
+      var idiomaDvSpan = document.getElementById("idioma-dv");
+
+      function fmt(s) {
+        if (isNaN(s) || s < 0) s = 0;
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ":" + (sec < 10 ? "0" : "") + sec;
+      }
+
+      function bindPlayer(player, btnId, progId, tiempoId, progBgId) {
+        var btn = document.getElementById(btnId);
+        var prog = document.getElementById(progId);
+        var tiempo = document.getElementById(tiempoId);
+        var progBg = document.getElementById(progBgId);
+
+        player.addEventListener("timeupdate", function () {
+          if (player.duration) {
+            prog.style.width =
+              (player.currentTime / player.duration) * 100 + "%";
+            tiempo.textContent =
+              fmt(player.currentTime) + " / " + fmt(player.duration);
+          }
+        });
+        player.addEventListener("play", function () {
+          btn.innerHTML = "&#9646;&#9646;";
+        });
+        player.addEventListener("pause", function () {
+          btn.innerHTML = "&#9654;";
+        });
+        player.addEventListener("ended", function () {
+          btn.innerHTML = "&#9654;";
+        });
+
+        btn.onclick = function () {
+          // Detener el otro si está sonando
+          var otro = player === playerEs ? playerDv : playerEs;
+          if (!otro.paused) otro.pause();
+
+          if (player.paused) player.play();
+          else player.pause();
+        };
+
+        progBg.onclick = function (e) {
+          if (player.duration) {
+            var rect = progBg.getBoundingClientRect();
+            player.currentTime =
+              ((e.clientX - rect.left) / rect.width) * player.duration;
+          }
+        };
+      }
+
+      function resetPlayer(player, progId, tiempoId, btnId) {
+        player.pause();
+        document.getElementById(progId).style.width = "0%";
+        document.getElementById(tiempoId).textContent = "0:00 / 0:00";
+        document.getElementById(btnId).innerHTML = "&#9654;";
+      }
+
+      function renderDots() {
+        var dots = document.getElementById("dots");
+        dots.innerHTML = "";
+        for (var i = 0; i < diapositivas.length; i++) {
+          var d = document.createElement("span");
+          d.className = "dot" + (i === actual ? " active" : "");
+          (function (idx) {
+            d.onclick = function () {
+              irA(idx);
+            };
+          })(i);
+          dots.appendChild(d);
+        }
+      }
+
+      function mostrar(idx) {
+        var s = diapositivas[idx];
+
+        document.getElementById("titulo-presentacion").textContent =
+          s.titulo || "Presentación";
+        // document.getElementById("contador").textContent = (idx + 1) + " / " + diapositivas.length;
+
+        // Imagen
+        var wrap = document.getElementById("slide-img-wrap");
+        wrap.innerHTML = "";
+        if (s.imagen) {
+          var img = document.createElement("img");
+          img.id = "slide-img";
+          img.src = s.imagen;
+          img.alt = s.titulo || "";
+          wrap.appendChild(img);
+        } else {
+          var ph = document.createElement("div");
+          ph.id = "slide-img-placeholder";
+          ph.textContent = "[ sin imagen ]";
+          wrap.appendChild(ph);
+        }
+
+        // Texto
+        document.getElementById("slide-texto").textContent = s.texto || "";
+        idiomaDvSpan.textContent = s.idioma || "Segundo idioma";
+
+        // Audios
+        resetPlayer(playerEs, "prog-es", "tiempo-es", "btn-es");
+        resetPlayer(playerDv, "prog-dv", "tiempo-dv", "btn-dv");
+
+        playerEs.src = s.audio_es || "";
+        playerDv.src = s.audio_dv || "";
+
+        // Mostrar u ocultar tarjeta según si hay audio
+        document.querySelector(".audio-card.es").style.display = s.audio_es
+          ? ""
+          : "none";
+        document.querySelector(".audio-card.dv").style.display = s.audio_dv
+          ? ""
+          : "none";
+
+        document.getElementById("btn-prev").disabled = idx === 0;
+        document.getElementById("btn-next").disabled =
+          idx === diapositivas.length - 1;
+
+        renderDots();
+      }
+
+      function irA(idx) {
+        if (idx < 0 || idx >= diapositivas.length) return;
+        playerEs.pause();
+        playerDv.pause();
+        var area = document.getElementById("slide-area");
+        area.classList.add("fade");
+        setTimeout(function () {
+          actual = idx;
+          mostrar(actual);
+          area.classList.remove("fade");
+        }, 260);
+      }
+
+      // Conectar controles de los dos reproductores
+      bindPlayer(playerEs, "btn-es", "prog-es", "tiempo-es", "prog-bg-es");
+      bindPlayer(playerDv, "btn-dv", "prog-dv", "tiempo-dv", "prog-bg-dv");
+
+      // Navegación
+      document.getElementById("btn-prev").onclick = function () {
+        irA(actual - 1);
+      };
+      document.getElementById("btn-next").onclick = function () {
+        irA(actual + 1);
+      };
+
+      // Swipe
+      var txStart = 0;
+      document.addEventListener(
+        "touchstart",
+        function (e) {
+          txStart = e.changedTouches[0].screenX;
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "touchend",
+        function (e) {
+          var dx = e.changedTouches[0].screenX - txStart;
+          if (Math.abs(dx) > 60) {
+            if (dx < 0) irA(actual + 1);
+            else irA(actual - 1);
+          }
+        },
+        { passive: true },
+      );
+
+      // Teclado
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" || e.key === " ") irA(actual + 1);
+        if (e.key === "ArrowLeft") irA(actual - 1);
+      });
+
+      mostrar(0);
+    </script>
+  </body>
+</html>
