@@ -1,0 +1,30 @@
+CACHE MANIFEST
+# 2026-05-28:v2
+
+# Explicitly cached 'master entries'.
+CACHE:
+index.html
+  /audios/es/1.mp3
+  /audios/es/2.mp3
+    /audios/es/3.mp3
+    /audios/es/4.mp3
+    /audios/es/5.mp3
+    /audios/es/6.mp3
+    /audios/es/7.mp3
+    /audios/es/8.mp3
+    /audios/dd/1.mp,
+    /audios/dd/2.mp3
+    /audios/dd/3.mp3
+    /audios/dd/4.mp3
+    /audios/dd/5.mp3
+    /audios/dd/6.mp3
+    /audios/dd/7.mp3
+    /audios/dd/8.mp3
+    /imagenes/1.jpg
+    /imagenes/2.jpg
+    /imagenes/3.jpg
+    /imagenes/4.jpg
+    /imagenes/5.jpg
+    /imagenes/6.jpg
+    /imagenes/7.jpg
+    /imagenes/8.jpg
